@@ -1,16 +1,16 @@
-# ConvertPro - API Backend 🚀
+# ConvertPro
 
 O **ConvertPro** é uma API RESTful de alto desempenho construída em **Laravel**, projetada para resolver o problema de conversão de arquivos de mídia de forma totalmente assíncrona. O foco do projeto é permitir que usuários extraiam áudio ou convertam vídeos do YouTube sem precisar manter a aba do navegador aberta, delegando o processamento pesado para filas em segundo plano.
 
 ---
 
-## 💡 Motivação
+## Motivação
 
 A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arquivos, mas que gerasse um fluxo de trabalho confiável para o usuário. Muitas soluções atuais falham ao travar a interface do cliente durante o upload ou processamento. O ConvertPro separa a **solicitação** da **execução**, garantindo escalabilidade e uma experiência de uso fluida através de um sistema assíncrono.
 
 ---
 
-## 🛠️ Funcionalidades Principais
+## Funcionalidades Principais
 
 * **Conversão do YouTube:** Suporta a entrada de URLs do YouTube para conversão direta em MP4 ou MP3.
 * **Processamento Assíncrono:** Utiliza sistema de filas para processar arquivos em background, liberando o usuário imediatamente após o envio.
@@ -21,7 +21,7 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
 
 ---
 
-## 🚀 Tecnologias Utilizadas
+## Tecnologias Utilizadas
 
 * **Framework:** Laravel (PHP).
 * **Banco de Dados:** Estrutura relacional para gestão de usuários, conversões e metadados de arquivos.
@@ -31,7 +31,7 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
 
 ---
 
-## ⚙️ Instalação e Configuração
+## Instalação e Configuração
 
 Para rodar o projeto localmente, siga os passos abaixo:
 
