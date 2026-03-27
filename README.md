@@ -31,11 +31,8 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
 
 ---
 
-## Instalação e Configuração
+## Clone o repositório
 
-Para rodar o projeto localmente, siga os passos abaixo:
-
-1. **Clone o repositório:**
    ```bash
    git clone [https://github.com/01ZEROUM/Project-ConvertPro.git](https://github.com/01ZEROUM/Project-ConvertPro.git)
    cd Project-ConvertPro
