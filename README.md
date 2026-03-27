@@ -34,5 +34,5 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
 ## Clone o repositório
 
    ```bash
-   git clone [https://github.com/01ZEROUM/Project-ConvertPro.git](https://github.com/01ZEROUM/Project-ConvertPro.git)
+   git clone https://github.com/01ZEROUM/Project-ConvertPro.git
    cd Project-ConvertPro
