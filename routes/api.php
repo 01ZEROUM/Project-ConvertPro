@@ -9,16 +9,6 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ConvertedFileController;
 
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
@@ -30,7 +20,7 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 
-    /*Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima*/
+    Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima
 
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
@@ -44,8 +34,8 @@ Route::prefix('v1')->group(function () {
         Route::get('download/{id}', [DownloadController::class, 'download']); // Rota para fazer o Download com ID do arquivo
         
         Route::apiResource('files', ConvertedFileController::class) // Rota para os arquivos convertidos
-            ->only(['index', 'show', 'delete']);
+            ->only(['index', 'show', 'destroy']);
         
-    //});
+    });
 
 });
