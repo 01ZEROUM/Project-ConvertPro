@@ -24,10 +24,10 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
 ## Tecnologias Utilizadas
 
 * **Framework:** Laravel (PHP).
-* **Banco de Dados:** Estrutura relacional para gestão de usuários, conversões e metadados de arquivos.
+* **Banco de Dados:** MySQL.
 * **Processamento de Filas:** Redis / Database Driver para processamento assíncrono.
 * **Storage:** Suporte para armazenamento Local ou AWS S3.
-* **Autenticação:** API Tokens e Socialite (Google, Apple, Firebase).
+* **Autenticação:** Laravel Sanctum.
 
 ---
 
