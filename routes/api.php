@@ -21,7 +21,7 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 
-    Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima
+    /*Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima*/
 
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
@@ -37,14 +37,13 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('files', ConvertedFileController::class) // Rota para os arquivos convertidos
             ->only(['index', 'show', 'destroy']);
 
+        // Rotas perfil do usuário
+        Route::apiResource('/profile', [ProfileController::class])
+            ->only(['show', 'update', 'destroy']);
 
-        //rotas perfil do usuário
-        Route::get('/profile', [ProfileController::class, 'show']);
-        Route::put('/profile', [ProfileController::class, 'update']);
-        Route::delete('/profile', [ProfileController::class, 'destroy']);
-
-        //rotas users
+        // Rota de usuários
         Route::apiResource('users', UserController::class);
-    });
+    
+    //});
 
 });
