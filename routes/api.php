@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConversionController;
+use App\Http\Controllers\DownloadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,5 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::apiResource('conversions', ConversionController::class);
-Route::get('conversions/{id}/status', [ConversionController::class, 'status']);
-Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']);
+Route::get('/conversions/{id}/status', [ConversionController::class, 'status']);
+Route::post('/conversions/{id}/retry', [ConversionController::class, 'retry']);
+Route::get('/download/{id}', [DownloadController::class, 'download']);
