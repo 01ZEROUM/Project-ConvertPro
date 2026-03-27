@@ -35,7 +35,7 @@ Route::prefix('v1')->group(function () {
         Route::get('download/{id}', [DownloadController::class, 'download']); // Rota para fazer o Download com ID do arquivo
         
         Route::apiResource('files', ConvertedFileController::class) // Rota para os arquivos convertidos
-            ->only(['index', 'show', 'delete']);
+            ->only(['index', 'show', 'destroy']);
 
 
         //rotas perfil do usuário
