@@ -36,3 +36,16 @@ A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arqu
    ```bash
    git clone https://github.com/01ZEROUM/Project-ConvertPro.git
    cd Project-ConvertPro
+   ```
+---
+## Créditos e Equipe
+
+Projeto desenvolvido por:
+ZEROUM.
+
+---
+📄 Licença
+Este projeto está sob a licença **MIT**.
+
+
+
