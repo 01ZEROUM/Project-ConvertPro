@@ -20,7 +20,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResource('conversions', ConversionController::class);
-Route::get('/conversions/{id}/status', [ConversionController::class, 'status']);
-Route::post('/conversions/{id}/retry', [ConversionController::class, 'retry']);
-Route::get('/download/{id}', [DownloadController::class, 'download']);
+Route::prefix('v1')->group(function () {
+    Route::apiResource('conversions', ConversionController::class);
+    Route::get('/conversions/{id}/status', [ConversionController::class, 'status']);
+    Route::post('/conversions/{id}/retry', [ConversionController::class, 'retry']);
+    Route::get('/download/{id}', [DownloadController::class, 'download']);
+});

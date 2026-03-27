@@ -13,7 +13,7 @@ class ConversionController extends Controller
      */
     public function index()
     {
-       echo "INDEX";
+       
     }
 
     /**
