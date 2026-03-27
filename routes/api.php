@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ConversionController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ConvertedFileController;
 
 
@@ -45,6 +46,15 @@ Route::prefix('v1')->group(function () {
         
         Route::apiResource('files', ConvertedFileController::class) // Rota para os arquivos convertidos
             ->only(['index', 'show', 'delete']);
+
+
+        //rotas perfil do usuário
+        Route::get('/profile', [ProfileController::class, 'show']);
+        Route::put('/profile', [ProfileController::class, 'update']);
+        Route::delete('/profile', [ProfileController::class, 'destroy']);
+
+        //rotas users
+        Route::apiResource('users', UserController::class);
         
     //});
 
