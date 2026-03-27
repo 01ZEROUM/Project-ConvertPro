@@ -1,64 +1,41 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# ConvertPro - API Backend 🚀
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[cite_start]O **ConvertPro** é uma API RESTful de alto desempenho construída em **Laravel**, projetada para resolver o problema de conversão de arquivos de mídia de forma totalmente assíncrona[cite: 13, 14]. [cite_start]O foco do projeto é permitir que usuários extraiam áudio ou convertam vídeos do YouTube sem precisar manter a aba do navegador aberta, delegando o processamento pesado para filas em segundo plano[cite: 13, 59].
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 💡 Motivação
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+[cite_start]A ideia surgiu da necessidade de uma ferramenta que não apenas convertesse arquivos, mas que gerasse um fluxo de trabalho confiável para o usuário[cite: 13]. Muitas soluções atuais falham ao travar a interface do cliente durante o upload ou processamento. [cite_start]O ConvertPro separa a **solicitação** da **execução**, garantindo escalabilidade e uma experiência de uso fluida através de um sistema assíncrono[cite: 58, 59].
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Funcionalidades Principais
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+* [cite_start]**Conversão do YouTube:** Suporta a entrada de URLs do YouTube para conversão direta em MP4 ou MP3[cite: 13, 18, 82].
+* [cite_start]**Processamento Assíncrono:** Utiliza sistema de filas para processar arquivos em background, liberando o usuário imediatamente após o envio[cite: 62].
+* [cite_start]**Notificações Inteligentes:** Disparo automático de e-mails para informar sobre o recebimento, conclusão da conversão e alertas de expiração de arquivos[cite: 46, 47, 48].
+* [cite_start]**Gestão de Armazenamento:** Um bot integrado realiza a limpeza periódica de arquivos expirados (após 7 dias) para otimizar o espaço em disco[cite: 53, 54, 75].
+* [cite_start]**Segurança e Autenticação:** Controle de acesso via tokens de API e integração com provedores externos como Google, Apple e Firebase[cite: 86, 88].
+* [cite_start]**Sistema de Log:** Registro detalhado de uploads, conversões, erros de sistema e downloads efetuados[cite: 65, 66].
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-## Laravel Sponsors
+## 🚀 Tecnologias Utilizadas
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+* [cite_start]**Framework:** Laravel (PHP)[cite: 13].
+* [cite_start]**Banco de Dados:** Estrutura relacional para gestão de usuários, conversões e metadados de arquivos[cite: 15, 27, 39].
+* [cite_start]**Processamento de Filas:** Redis / Database Driver para processamento assíncrono[cite: 22, 58].
+* [cite_start]**Storage:** Suporte para armazenamento Local ou AWS S3[cite: 34].
+* [cite_start]**Autenticação:** API Tokens e Socialite (Google, Apple, Firebase)[cite: 86, 88].
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+## ⚙️ Instalação e Configuração
 
-## Contributing
+Para rodar o projeto localmente, siga os passos abaixo:
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+1. **Clone o repositório:**
+   ```bash
+   git clone [https://github.com/01ZEROUM/Project-ConvertPro.git](https://github.com/01ZEROUM/Project-ConvertPro.git)
+   cd Project-ConvertPro
