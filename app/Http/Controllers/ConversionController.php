@@ -13,7 +13,9 @@ class ConversionController extends Controller
      */
     public function index()
     {
-       
+       return response()->json([
+        'message' => 'Index'
+       ]);
     }
 
     /**
@@ -24,7 +26,9 @@ class ConversionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return response()->json([
+        'message' => 'Store'
+       ]);
     }
 
     /**
@@ -35,7 +39,9 @@ class ConversionController extends Controller
      */
     public function show($id)
     {
-        
+        return response()->json([
+        'message' => 'Show'
+       ]);
     }
 
     /**
@@ -47,7 +53,9 @@ class ConversionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        return response()->json([
+        'message' => 'Update'
+       ]);
     }
 
     /**
@@ -58,17 +66,23 @@ class ConversionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        return response()->json([
+        'message' => 'Destroy'
+       ]);
     }
 
     public function status()
     {
-
+        return response()->json([
+        'message' => 'Status'
+       ]);
     }
 
     public function retry()
     {
-
+        return response()->json([
+        'message' => 'Retry'
+       ]);
     }
 
 

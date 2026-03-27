@@ -18,14 +18,14 @@ class ConvertedFileController extends Controller
     public function show()
     {
         return response()->json([
-            'message' => 'Arquivo atualizado',
+            'message' => 'Arquivo atualizado com sucesso',
         ]);
     }
 
-    public function delete()
+    public function destroy($id)
     {
         return response()->json([
-            'message' => 'Arquivo deletado',
+            'message' => "Arquivo " . $id . " deletado com sucesso"
         ]);
     }
 }
