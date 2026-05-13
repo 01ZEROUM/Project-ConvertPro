@@ -1,33 +1,54 @@
 <?php
 
 namespace App\Http\Controllers;
+
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
 public function index() {
+    $usuarios = User::select('nome', 'email')->get();
+    
         return response()->json([
-            'message' => 'index' 
+            $usuarios
         ]);
     }
     public function store(Request $request) {
+        $usuario = new User();
+        $usuario->nome = $request->nome;
+        $usuario->email = $request->email;
+        $usuario->senha_hash = $request->senha_hash;
+        $usuario->save();
         return response()->json([
             'message' => 'store'
         ]);
     }
     public function show(string $id) {
+        $usuario = User::select('nome', 'email')->find($id);
         return response()->json([
-            'message' => "show {$id}"
+            $usuario
         ]);
     }
-    public function update(Request $request, string $id) {
+
+    public function email(string $email) {
+        $usuario = User::select('nome', 'email')->where('email', '=', $email)->get();
+    
         return response()->json([
-            'message' => "update {$id}" 
+            $usuario
+        ]);
+    }
+
+    public function update(Request $request, string $id) {
+        User::find($id)->update(["nome"=>$request->nome, "email"=>$request->email]);
+        return response()->json([
+            'message' => "Usuário alterado com sucesso! ID: {$id}" 
         ]);
     }
     public function destroy(string $id) {
+        User::find($id)->delete();
         return response()->json([
-            'message' => "destroy {$id}"
+            'message' => "Usuário deletado. ID: {$id}"
         ]);
     }
 }

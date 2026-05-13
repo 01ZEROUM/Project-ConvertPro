@@ -26,23 +26,23 @@ Route::prefix('v1')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
         
-        Route::apiResource('conversions', ConversionController::class) // Rota de converssões
+        Route::apiResource('conversions', ConversionController::class) 
             ->only(['index', 'store', 'show', 'destroy']);
         
-        Route::get('conversions/{id}/status', [ConversionController::class, 'status']); // Mostra o status da conversão
-        Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']); // Tenta refazer a conversão caso falhe
+        Route::get('conversions/{id}/status', [ConversionController::class, 'status']); 
+        Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']); 
         
-        Route::get('download/{id}', [DownloadController::class, 'download']); // Rota para fazer o Download com ID do arquivo
+        Route::get('download/{id}', [DownloadController::class, 'download']); 
         
-        Route::apiResource('files', ConvertedFileController::class) // Rota para os arquivos convertidos
+        Route::apiResource('files', ConvertedFileController::class)
             ->only(['index', 'show', 'destroy']);
 
-        // Rotas perfil do usuário
-        Route::apiResource('/profile', [ProfileController::class])
+        Route::apiResource('profile', ProfileController::class)
             ->only(['show', 'update', 'destroy']);
 
-        // Rota de usuários
         Route::apiResource('users', UserController::class);
+        Route::get('users/email/{email}', [UserController::class, 'email']); 
+
     
     //});
 

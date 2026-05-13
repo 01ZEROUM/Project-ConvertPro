@@ -40,7 +40,7 @@ class ConversionController extends Controller
     public function show($id)
     {
         return response()->json([
-        'message' => 'Show'
+        'message' => 'Show' . ' ' . $id
        ]);
     }
 
@@ -67,21 +67,21 @@ class ConversionController extends Controller
     public function destroy($id)
     {
         return response()->json([
-        'message' => 'Destroy'
+        'message' => 'Destroy' . ' ' . $id
        ]);
     }
 
-    public function status()
+    public function status($id)
     {
         return response()->json([
-        'message' => 'Status'
+        'message' => 'Status' . ' ' . $id
        ]);
     }
 
-    public function retry()
+    public function retry($id)
     {
         return response()->json([
-        'message' => 'Retry'
+        'message' => 'Retry' . ' ' . $id
        ]);
     }
 
