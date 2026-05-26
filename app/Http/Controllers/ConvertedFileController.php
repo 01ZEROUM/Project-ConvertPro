@@ -25,7 +25,7 @@ class ConvertedFileController extends Controller
     public function destroy($id)
     {
         return response()->json([
-            'message' => "Arquivo " . $id . " deletado com sucesso"
+            'message' => "Arquivo " . $id . " deletado com sucesso!"
         ]);
     }
 }
