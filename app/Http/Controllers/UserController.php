@@ -42,13 +42,13 @@ public function index() {
     public function update(Request $request, string $id) {
         User::find($id)->update(["nome"=>$request->nome, "email"=>$request->email]);
         return response()->json([
-            'message' => "Usuário alterado com sucesso! ID: {$id}" 
+            'message' => "Usuário alterado com sucesso! ID: {$id}"
         ]);
     }
     public function destroy(string $id) {
         User::find($id)->delete();
         return response()->json([
-            'message' => "Usuário deletado. ID: {$id}"
+            'message' => "Usuário deletado com sucesso!. ID: {$id}"
         ]);
     }
 }
