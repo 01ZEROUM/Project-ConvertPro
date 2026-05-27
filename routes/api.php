@@ -21,7 +21,7 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 
-    //Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima
+    Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima
 
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('me', [AuthController::class, 'me']);
@@ -32,7 +32,6 @@ Route::prefix('v1')->group(function () {
         Route::get('conversions/{id}/status', [ConversionController::class, 'status']); 
         Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']); 
         
-        Route::get('download/{id}', [DownloadController::class, 'page'])->name('download.page');
         Route::get('download/{id}/file', [DownloadController::class, 'download'])->name('download.arquivo');
         
         Route::apiResource('files', ConvertedFileController::class)
@@ -45,6 +44,6 @@ Route::prefix('v1')->group(function () {
         Route::get('users/email/{email}', [UserController::class, 'email']); 
 
     
-    //});
+    });
 
 });
