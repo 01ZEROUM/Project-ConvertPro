@@ -110,26 +110,32 @@
       btn.disabled = true;
 
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/v1/conversions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            source: url,
-            target_format: format
-          })
-        });
+            const response = await fetch("http://127.0.0.1:8000/api/v1/conversions", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        source: url,
+        target_format: format
+    })
+    });
 
-        const data = await response.json();
+    const data = await response.json();
 
-        console.log("Resposta Laravel:", data);
+    console.log("Resposta Laravel:", data);
 
-        if (data.conversion && data.conversion.id) {
-          checkStatus(data.conversion.id);
-        } else {
-          alert("Erro ao iniciar conversão");
-        }
+    if (data.id) {
+    checkStatus(data.id);
+    } else {
+    alert("Erro ao iniciar conversão");
+    }
+
+    if (data.id) {
+    checkStatus(data.id);
+    } else {
+    alert("Erro ao iniciar conversão");
+    }
 
       } catch (error) {
         console.error(error);

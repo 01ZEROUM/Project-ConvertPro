@@ -16,7 +16,7 @@ class DownloadController extends Controller
         ], 404);
     }
 
-    $file = public_path('downloads/' . $conversion->file_path);
+    $file = glob(public_path("downloads/{$id}/*"))[0] ?? null;
 
     if (!file_exists($file)) {
         return response()->json([

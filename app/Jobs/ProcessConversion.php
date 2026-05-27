@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs;
 
 use App\Models\Conversion;
@@ -21,57 +22,73 @@ class ProcessConversion implements ShouldQueue
     }
 
     public function handle()
-{
-    $url = $this->conversion->source;
-    $format = $this->conversion->target_format;
+    {
+        $url = $this->conversion->source;
+        $format = $this->conversion->target_format;
 
-    if ($format === 'mp3') {
+        $outputDir = public_path('downloads');
 
-        $command = [
-            'yt-dlp',
-            '-x',
-            '--audio-format', 'mp3',
-            '-o', public_path('downloads/' . $this->conversion->id . '-%(title)s.%(ext)s'),
-            $url
-        ];
+        if (!file_exists($outputDir)) {
+            mkdir($outputDir, 0777, true);
+        }
 
-    } else {
+        // Nome base do arquivo (controlado pelo ID)
+        $outputTemplate = $outputDir . '/' . $this->conversion->id . '.%(ext)s';
 
-        $command = [
-            'yt-dlp',
-            '-f', 'bestvideo+bestaudio/best',
-            '-o', public_path('downloads/' . $this->conversion->id . '-%(title)s.%(ext)s'),
-            $url
-        ];
+        // Comando yt-dlp
+        $command = $format === 'mp3'
+            ? [
+                'yt-dlp',
+                '-x',
+                '--audio-format', 'mp3',
+                '-o', $outputDir . '/' . $this->conversion->id . '.%(title)s ' . '[By. ConvertPro]',
+                $url
+            ]
+            : [
+                'yt-dlp',
+                //'-f', 'bestvideo+bestaudio/best',
+                '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]',
+                '--merge-output-format', 'mp4',
+                '-o', $outputDir . '/' . $this->conversion->id . '.%(title)s ' . '[By. ConvertPro]',
+                $url
+            ];
+
+        $process = new Process($command);
+        $process->setTimeout(3600);
+        $process->run();
+
+        // Se sucesso
+        if ($process->isSuccessful()) {
+
+            // pega arquivo gerado
+            $files = glob($outputDir . '/' . $this->conversion->id . '*');
+
+            $latestFile = collect($files)
+                ->sortByDesc(fn($file) => filemtime($file))
+                ->first();
+
+            if ($latestFile && file_exists($latestFile)) {
+
+                $this->conversion->update([
+                    'status' => 'completed',
+                    'file_path' => basename($latestFile),
+                    'completed_at' => now()
+                ]);
+
+            } else {
+
+                $this->conversion->update([
+                    'status' => 'failed',
+                    'error_message' => 'Arquivo não foi gerado corretamente'
+                ]);
+            }
+
+        } else {
+
+            $this->conversion->update([
+                'status' => 'failed',
+                'error_message' => $process->getErrorOutput()
+            ]);
+        }
     }
-
-    $process = new Process($command);
-    $process->setTimeout(3600);
-    $process->run();
-
-    // pega arquivo gerado
-    $outputPath = public_path('downloads');
-    $files = glob($outputPath . '/*');
-
-    $latestFile = !empty($files)
-        ? collect($files)->sortByDesc(fn($file) => filemtime($file))->first()
-        : null;
-
-    if ($process->isSuccessful()) {
-
-        $this->conversion->update([
-            'status' => 'completed',
-            'completed_at' => now(),
-            'file_path' => $latestFile ? basename($latestFile) : null
-        ]);
-
-    } else {
-
-        $this->conversion->update([
-            'status' => 'failed',
-            'error_message' => $process->getErrorOutput()
-        ]);
-    }
-}
-
 }

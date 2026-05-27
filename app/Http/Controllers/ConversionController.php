@@ -29,15 +29,17 @@ class ConversionController extends Controller
  
 public function store(Request $request)
 {
+
     $request->validate([
         'source' => 'required|url',
         'target_format' => 'required|in:mp3,mp4'
     ]);
 
     $conversion = Conversion::create([
-        'user_id' => 1,
+        'user_id' =>null,
         'source' => $request->source,
         'target_format' => $request->target_format,
+        'source_type' => 'youtube',
         'status' => 'pending'
     ]);
 
