@@ -32,7 +32,8 @@ Route::prefix('v1')->group(function () {
         Route::get('conversions/{id}/status', [ConversionController::class, 'status']); 
         Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']); 
         
-        Route::get('download/{id}', [DownloadController::class, 'download']); 
+        Route::get('download/{id}', [DownloadController::class, 'page'])->name('download.page');
+        Route::get('download/{id}/file', [DownloadController::class, 'download'])->name('download.arquivo');
         
         Route::apiResource('files', ConvertedFileController::class)
             ->only(['index', 'show', 'destroy']);

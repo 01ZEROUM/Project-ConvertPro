@@ -4,122 +4,98 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Conversion;
-use Symfony\Component\Process\Process;
 use App\Jobs\ProcessConversion;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ConversionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $conversions = Conversion::latest()->get();
         return response()->json($conversions);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
- 
-public function store(Request $request)
-{
-
-    $request->validate([
-        'source' => 'required|url',
-        'target_format' => 'required|in:mp3,mp4'
-    ]);
-
-    $conversion = Conversion::create([
-        'user_id' =>null,
-        'source' => $request->source,
-        'target_format' => $request->target_format,
-        'source_type' => 'youtube',
-        'status' => 'pending'
-    ]);
-
-    ProcessConversion::dispatch($conversion);
-
-    return response()->json([
-        'id' => $conversion->id,
-        'status' => 'pending'
-    ]);
-}
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    
-    public function show($id)
-{
-    $conversion = Conversion::findOrFail($id);
-
-    return response()->json([
-        'id' => $conversion->id,
-        'status' => $conversion->status,
-        'file_path' => $conversion->file_path,
-        'created_at' => $conversion->started_at,
-        'completed_at' => $conversion->completed_at
-    ]);
-}
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function store(Request $request)
     {
-        return response()->json([
-        'message' => 'Update'
-       ]);
+        try {
+            $request->validate([
+                'source' => 'required|url',
+                'target_format' => 'required|in:mp3,mp4'
+            ]);
+
+            $conversion = Conversion::create([
+                'user_id'       => Auth::id(),
+                'source'        => $request->source,
+                'target_format' => $request->target_format,
+                'source_type'   => 'youtube',
+                'status'        => 'pending',
+                'progress'      => 0
+            ]);
+
+            ProcessConversion::dispatch($conversion);
+
+            return response()->json([
+                'id'     => $conversion->id,
+                'status' => 'pending'
+            ], 201);
+
+        } catch (\Exception $e) {
+            Log::error('Erro ao criar conversão', [
+                'error' => $e->getMessage()
+            ]);
+
+            return response()->json([
+                'message' => 'Erro interno ao processar a solicitação.'
+            ], 500);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-   public function destroy($id)
+    public function show($id)
+    {
+        $conversion = Conversion::findOrFail($id);
+        return response()->json($conversion);
+    }
+
+    public function update(Request $request, $id)
+    {
+        return response()->json(['message' => 'Update']);
+    }
+
+    public function destroy($id)
     {
         $conversion = Conversion::findOrFail($id);
         $conversion->delete();
-        return response()->json([
-            'message' => 'Conversão deletada com sucesso'
-
-        ]);
+        return response()->json(['message' => 'Conversão deletada com sucesso']);
     }
 
-  public function status($id)
+    public function status($id)
     {
         $conversion = Conversion::findOrFail($id);
         return response()->json([
-
             'id' => $conversion->id,
             'status' => $conversion->status,
             'started_at' => $conversion->started_at,
-            'completed_at' => $conversion->completed_at
-
+            'completed_at' => $conversion->completed_at,
+            'progress' => $conversion->progress ?? 0
         ]);
     }
 
     public function retry($id)
     {
-        return response()->json([
-        'message' => 'Retry' . ' ' . $id
-       ]);
+        $conversion = Conversion::findOrFail($id);
+        
+        if (!in_array($conversion->status, ['failed', 'error'])) {
+            return response()->json(['message' => 'Só é possível retry em conversões falhas.'], 422);
+        }
+
+        $conversion->update([
+            'status' => 'pending',
+            'progress' => 0,
+        ]);
+
+        ProcessConversion::dispatch($conversion);
+
+        return response()->json(['message' => 'Conversão reenviada com sucesso']);
     }
-
-
 }

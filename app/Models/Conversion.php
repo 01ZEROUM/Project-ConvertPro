@@ -17,7 +17,9 @@ class Conversion extends Model
         'job_id',
         'error_message',
         'started_at',
-        'completed_at'
+        'completed_at',
+        'file_path',
+        'progress'
     ];
 
     public function user()

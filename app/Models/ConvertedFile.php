@@ -20,6 +20,13 @@ class ConvertedFile extends Model
         'warning_email_sent_at'
     ];
 
+    protected $casts = [
+        'size_in_bytes'         => 'integer',
+        'is_downloadable'       => 'boolean',
+        'expires_at'            => 'datetime',
+        'warning_email_sent_at' => 'datetime',
+    ];
+
     public function conversion()
     {
         return $this->belongsTo(Conversion::class);
