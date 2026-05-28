@@ -10,9 +10,10 @@ use Illuminate\Support\Facades\Log;
 
 class ConversionController extends Controller
 {
-    public function index()
+
+    public function index(Request $request)
     {
-        $conversions = Conversion::latest()->get();
+        $conversions = Conversion::where('user_id', $request->user()->id)->latest()->get();
         return response()->json($conversions);
     }
 
@@ -25,7 +26,7 @@ class ConversionController extends Controller
             ]);
 
             $conversion = Conversion::create([
-                'user_id'       => Auth::id(),
+                'user_id'       => Auth::id(), 
                 'source'        => $request->source,
                 'target_format' => $request->target_format,
                 'source_type'   => 'youtube',
@@ -41,37 +42,42 @@ class ConversionController extends Controller
             ], 201);
 
         } catch (\Exception $e) {
-            Log::error('Erro ao criar conversão', [
-                'error' => $e->getMessage()
-            ]);
-
-            return response()->json([
-                'message' => 'Erro interno ao processar a solicitação.'
-            ], 500);
+            Log::error('Erro ao criar conversão', ['error' => $e->getMessage()]);
+            return response()->json(['message' => 'Erro interno ao processar a solicitação.'], 500);
         }
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
         $conversion = Conversion::findOrFail($id);
+        
+        if ($conversion->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+        
         return response()->json($conversion);
     }
 
-    public function update(Request $request, $id)
-    {
-        return response()->json(['message' => 'Update']);
-    }
-
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $conversion = Conversion::findOrFail($id);
+        
+        if ($conversion->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+
         $conversion->delete();
         return response()->json(['message' => 'Conversão deletada com sucesso']);
     }
 
-    public function status($id)
+    public function status(Request $request, $id)
     {
         $conversion = Conversion::findOrFail($id);
+        
+        if ($conversion->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
+
         return response()->json([
             'id' => $conversion->id,
             'status' => $conversion->status,
@@ -81,9 +87,13 @@ class ConversionController extends Controller
         ]);
     }
 
-    public function retry($id)
+    public function retry(Request $request, $id)
     {
         $conversion = Conversion::findOrFail($id);
+        
+        if ($conversion->user_id !== $request->user()->id) {
+            return response()->json(['message' => 'Não autorizado'], 403);
+        }
         
         if (!in_array($conversion->status, ['failed', 'error'])) {
             return response()->json(['message' => 'Só é possível retry em conversões falhas.'], 422);

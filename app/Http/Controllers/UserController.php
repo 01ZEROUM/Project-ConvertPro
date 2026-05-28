@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
 public function index() {
-    $usuarios = User::select('nome', 'email')->get();
+    $usuarios = User::select('name', 'email')->get();
     
         return response()->json([
             $usuarios
@@ -16,23 +16,23 @@ public function index() {
     }
     public function store(Request $request) {
         $usuario = new User();
-        $usuario->nome = $request->nome;
+        $usuario->name = $request->name;
         $usuario->email = $request->email;
-        $usuario->senha_hash = $request->senha_hash;
+        $usuario->password = $request->password;
         $usuario->save();
         return response()->json([
             'message' => 'store'
         ]);
     }
     public function show(string $id) {
-        $usuario = User::select('nome', 'email')->find($id);
+        $usuario = User::select('name', 'email')->find($id);
         return response()->json([
             $usuario
         ]);
     }
 
     public function email(string $email) {
-        $usuario = User::select('nome', 'email')->where('email', '=', $email)->get();
+        $usuario = User::select('name', 'email')->where('email', '=', $email)->get();
     
         return response()->json([
             $usuario
@@ -40,7 +40,7 @@ public function index() {
     }
 
     public function update(Request $request, string $id) {
-        User::find($id)->update(["nome"=>$request->nome, "email"=>$request->email]);
+        User::find($id)->update(["name"=>$request->nome, "email"=>$request->email]);
         return response()->json([
             'message' => "Usuário alterado com sucesso! ID: {$id}"
         ]);

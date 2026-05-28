@@ -15,12 +15,16 @@ use App\Http\Controllers\DownloadController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('home');
 });
 
 Route::get('/login', function () {
     return view('login');
 })->name('login');
+
+Route::get('/convertedfiles', function () {
+    return view('convertedfiles'); 
+});
 
 Route::get('/download/{id}', [DownloadController::class, 'page'])->name('download.page');
 

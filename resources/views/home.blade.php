@@ -36,9 +36,9 @@
                 <span>Convert<span class="brand-accent">Pro</span></span>
             </a>
             <nav class="nav">
-                <a href="#">Recursos</a>
+                <a href="convertedfiles">Meus arquivos</a>
                 <a href="#">Como funciona</a>
-                <a href="#">FAQ</a>
+                <a href="#">Sobre nós</a>
             </nav>
             <div class="auth-buttons" id="authWrapper">
                 <a href="/login" class="login-btn">Entrar</a>
