@@ -21,6 +21,8 @@ Route::prefix('v1')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
 
+    Route::get('download/{id}/file', [DownloadController::class, 'download'])->name('download.arquivo');
+
     Route::middleware('auth:sanctum')->group(function() { // TODAS as rotas abaixo ficarão protegidas pelo middleware acima
 
         Route::post('logout', [AuthController::class, 'logout']);
@@ -31,8 +33,6 @@ Route::prefix('v1')->group(function () {
         
         Route::get('conversions/{id}/status', [ConversionController::class, 'status']); 
         Route::post('conversions/{id}/retry', [ConversionController::class, 'retry']); 
-        
-        Route::get('download/{id}/file', [DownloadController::class, 'download'])->name('download.arquivo');
         
         Route::apiResource('files', ConvertedFileController::class)
             ->only(['index', 'show', 'destroy']);

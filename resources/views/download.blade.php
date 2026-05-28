@@ -379,13 +379,20 @@
 
     // Função de verificação contínua (Polling) baseada no seu ConversionController@status
     function checkStatus() {
+        const token = localStorage.getItem('convertpro_token'); // Captura o token
+        
         const interval = setInterval(async () => {
             try {
-                // Ajuste a rota para bater com o método status() do seu ConversionController
-                const res = await fetch(`/api/v1/conversions/${conversionId}`);
+                const res = await fetch(`/api/v1/conversions/${id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Authorization': `Bearer ${token}` // Envia o passaporte do Sanctum
+                    }
+                });
+                
                 const data = await res.json();
 
-                // Atualiza progresso incremental na tela de forma limpa
                 updateUI(data.status, data.progress ?? 50, data.file_path);
 
                 if (data.status === 'completed' || data.status === 'failed') {
@@ -394,7 +401,7 @@
             } catch (err) {
                 console.error("Erro ao checar status:", err);
             }
-        }, 2000); // Verifica a cada 2 segundos
+        }, 2000);
     }
 
     // Inicializa a checagem ou libera direto se já veio pronto do backend
@@ -417,26 +424,19 @@
       }
     });
 
-    <script>
     document.addEventListener("DOMContentLoaded", () => {
-        // 1. Pega o token salvo no bolso do navegador
         const token = localStorage.getItem('convertpro_token');
-        const downloadBtn = document.getElementById('downloadFileBtn');
-
-        // Pegamos o ID da conversão direto da URL do navegador
-        // Exemplo: se a URL é /download/15, o split pega o "15"
-        const urlParts = window.location.pathname.split('/');
-        const conversionId = urlParts[urlParts.length - 1];
+        const downloadBtn = document.getElementById('downloadBtn'); // ID corrigido para bater com o HTML
 
         if (downloadBtn && token) {
-            // 2. Modifica o link do botão para injetar a rota da API + o Token de Segurança
+            // Modifica o link do botão para injetar o parâmetro ?token= conforme a Opção 1 que você escolheu
             downloadBtn.href = `/api/v1/download/${conversionId}/file?token=${token}`;
         } else {
-            // Se o cara tentar acessar sem token guardado, mandamos ele logar
             alert("Sessão expirada. Por favor, faça login novamente.");
             window.location.href = '/login';
         }
     });
-  </script>
+
+    </script>
 </body>
 </html>

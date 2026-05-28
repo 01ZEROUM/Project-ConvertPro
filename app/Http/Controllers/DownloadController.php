@@ -24,11 +24,22 @@ class DownloadController extends Controller
     }
 
     // 2. ESSE MÉTODO FAZ O DOWNLOAD DO ARQUIVO QUANDO CLICA NO BOTÃO
-    public function download($id)
+    public function download(Request $request, $id)
     {
         $conversion = Conversion::findOrFail($id);
 
-        if (Auth::check() && $conversion->user_id !== Auth::id()) {
+        // Se não houver sessão ativa, tenta autenticar manualmente usando o token passado na URL
+        if (!Auth::check() && $request->has('token')) {
+            $tokenString = str_replace('Bearer ', '', $request->query('token'));
+            $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($tokenString);
+            
+            if ($accessToken) {
+                Auth::login($accessToken->tokenable);
+            }
+        }
+
+        // Se mesmo após a checagem o usuário não estiver logado, ou o arquivo não pertencer a ele
+        if (!Auth::check() || $conversion->user_id !== Auth::id()) {
             abort(403, 'Acesso negado.');
         }
 
