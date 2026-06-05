@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_admin',
     ];
 
     /**
@@ -47,6 +48,14 @@ class User extends Authenticatable
         return $this->hasMany(Conversion::class);
     }
 
+    public function index(Request $request)
+    {
+        if (!$request->user()->is_admin) {
+            return response()->json([
+                'message' => 'Apenas admin pode acessar isso'
+            ], 403);
+        }
+
+        return User::select('id', 'name', 'email')->get();
+    }
 }
-
-

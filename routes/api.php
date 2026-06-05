@@ -40,10 +40,9 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('profile', ProfileController::class)
             ->only(['show', 'update', 'destroy']);
 
+        Route::middleware(['auth:sanctum', 'admin'])->group(function () {
         Route::apiResource('users', UserController::class);
-        Route::get('users/email/{email}', [UserController::class, 'email']); 
-
-    
-    });
+        }
+    );
 
 });
