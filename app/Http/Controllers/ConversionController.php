@@ -43,7 +43,6 @@ class ConversionController extends Controller
                 'id' => $conversion->id,
                 'status' => 'pending'
             ], 201);
-
         } catch (\Throwable $e) {
 
             Log::error('Erro ao criar conversão', [
@@ -75,6 +74,7 @@ class ConversionController extends Controller
             return response()->json(['message' => 'Não autorizado'], 403);
         }
 
+        $conversion->convertedFile()->delete();
         $conversion->delete();
 
         return response()->json(['message' => 'Conversão deletada com sucesso']);
@@ -111,17 +111,41 @@ class ConversionController extends Controller
             ], 422);
         }
 
-        $conversion->update([
-            'status' => 'pending',
-            'progress' => 0,
-            'started_at' => now(),
-            'completed_at' => null
-        ]);
+        try {
 
-        ProcessConversion::dispatch($conversion);
+            $conversion->update([
+                'status' => 'pending',
+                'progress' => 0,
+                'started_at' => now(),
+                'completed_at' => null,
+                'error_message' => null,
+                'job_id' => null
+            ]);
 
-        return response()->json([
-            'message' => 'Conversão reenviada com sucesso'
-        ]);
+            $conversion->refresh();
+
+            ProcessConversion::dispatch($conversion);
+
+            Log::info('Retry executado', [
+                'user_id' => $request->user()->id,
+                'conversion_id' => $conversion->id
+            ]);
+
+            return response()->json([
+                'message' => 'Conversão reenviada com sucesso',
+                'id' => $conversion->id,
+                'status' => $conversion->status
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Erro no retry', [
+                'error' => $e->getMessage(),
+                'conversion_id' => $id
+            ]);
+
+            return response()->json([
+                'message' => 'Erro ao tentar reprocessar conversão'
+            ], 500);
+        }
     }
 }
