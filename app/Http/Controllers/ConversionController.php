@@ -21,7 +21,6 @@ class ConversionController extends Controller
 
     public function store(Request $request)
     {
-         //dd($request->user());
         try {
             $request->validate([
                 'source' => 'required|url',
