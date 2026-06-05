@@ -15,15 +15,14 @@ class AdminMiddleware
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
 
-
     public function handle($request, Closure $next)
-    {
-        if (!$request->user() || !$request->user()->is_admin) {
-            return response()->json([
-                'message' => 'Acesso negado (admin only)'
-            ], 403);
-        }
-
-        return $next($request);
+{
+    if (!$request->user() || !$request->user()->is_admin) {
+        return response()->json([
+            'message' => 'Acesso negado (admin only)'
+        ], 403);
     }
+
+    return $next($request);
+}
 }
