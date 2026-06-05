@@ -1,26 +1,15 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use App\Models\Conversion;
 use Illuminate\Support\Facades\Auth;
-
-
 class DownloadController extends Controller
 {
     // 1. ESSE MÉTODO ABRE A PÁGINA (A VIEW)
     public function page($id)
     {
         $conversion = Conversion::findOrFail($id);
-
-        // Segurança básica
-        if (Auth::check() && $conversion->user_id !== Auth::id()) {
-            abort(403, 'Você não tem permissão para acessar este arquivo.');
-        }
-
-        // Garante que a variável 'conversion' está indo para a view download.blade.php
-        return view('download', compact('conversion'));  
+        return view('download', compact('conversion'));
     }
 
     // 2. ESSE MÉTODO FAZ O DOWNLOAD DO ARQUIVO QUANDO CLICA NO BOTÃO
@@ -28,17 +17,14 @@ class DownloadController extends Controller
     {
         $conversion = Conversion::findOrFail($id);
 
-        // Se não houver sessão ativa, tenta autenticar manualmente usando o token passado na URL
         if (!Auth::check() && $request->has('token')) {
             $tokenString = str_replace('Bearer ', '', $request->query('token'));
             $accessToken = \Laravel\Sanctum\PersonalAccessToken::findToken($tokenString);
-            
             if ($accessToken) {
                 Auth::login($accessToken->tokenable);
             }
         }
 
-        // Se mesmo após a checagem o usuário não estiver logado, ou o arquivo não pertencer a ele
         if (!Auth::check() || $conversion->user_id !== Auth::id()) {
             abort(403, 'Acesso negado.');
         }
@@ -53,6 +39,30 @@ class DownloadController extends Controller
             return response()->json(['message' => 'Arquivo não existe no servidor'], 404);
         }
 
-        return response()->download($file, basename($conversion->file_path));
+        // CORREÇÃO: sanitiza o nome para remover caracteres unicode que quebram o header
+        $extension = pathinfo($conversion->file_path, PATHINFO_EXTENSION);
+        $cleanName = $this->sanitizeFileName($conversion->file_path, $extension);
+
+        return response()->download($file, $cleanName);
+    }
+
+    // 3. LIMPA O NOME DO ARQUIVO PARA O DOWNLOAD
+    private function sanitizeFileName(string $filePath, string $extension): string
+    {
+        $name = pathinfo($filePath, PATHINFO_FILENAME);
+
+        // Remove o ID do início (ex: "136. ")
+        $name = preg_replace('/^\d+\.\s*/', '', $name);
+
+        // Substitui separadores unicode (｜, |, –, —) por hífen comum
+        $name = str_replace(['｜', '|', '–', '—'], '-', $name);
+
+        // Remove qualquer caractere que não seja letra, número, espaço, hífen ou colchete
+        $name = preg_replace('/[^\w\s\-\[\]áéíóúàèìòùãõâêîôûçÁÉÍÓÚÀÈÌÒÙÃÕÂÊÎÔÛÇ]/u', '', $name);
+
+        // Remove espaços duplos e trim
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+
+        return $name . '.' . $extension;
     }
 }

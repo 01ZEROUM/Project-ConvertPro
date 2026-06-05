@@ -36,7 +36,6 @@
       margin: 0 auto;
       padding: 0 24px;
     }
-    /* Header */
     header {
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(8px);
@@ -90,7 +89,6 @@
       width: 16px;
       height: 16px;
     }
-    /* Main */
     main {
       padding: 64px 0;
     }
@@ -123,7 +121,6 @@
       font-size: 16px;
       color: var(--muted);
     }
-    /* Card */
     .card {
       margin-top: 40px;
       background: var(--card);
@@ -168,7 +165,6 @@
       text-overflow: ellipsis;
       margin-top: 2px;
     }
-    /* Progress */
     .progress-wrap {
       margin-top: 12px;
     }
@@ -190,7 +186,6 @@
       color: var(--muted);
       margin-top: 6px;
     }
-    /* Buttons */
     .actions {
       margin-top: 24px;
       display: flex;
@@ -224,7 +219,7 @@
     .btn-primary.disabled {
       opacity: 0.6;
       cursor: not-allowed;
-      pointer-events: none; /* Desativa o clique no link HTML */
+      pointer-events: none;
     }
     .btn-outline {
       background: transparent;
@@ -239,7 +234,6 @@
       color: var(--muted);
       margin-top: 24px;
     }
-    /* Toast */
     .toast {
       position: fixed;
       bottom: 24px;
@@ -293,8 +287,7 @@
 
       <div class="card">
         <div class="file-row">
-          <div class="file-icon" id="fileIcon">
-            </div>
+          <div class="file-icon" id="fileIcon"></div>
           <div class="file-info">
             <div class="file-name" id="fileName">{{ $conversion->file_path ?? 'youtube-video.' . $conversion->target_format }}</div>
             <div class="file-source" id="fileSource">{{ $conversion->source }}</div>
@@ -308,10 +301,10 @@
         </div>
 
         <div class="actions">
-          <a href="{{ route('download.arquivo', $conversion->id) }}" class="btn btn-primary disabled" id="downloadBtn">
+          <button class="btn btn-primary disabled" id="downloadBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span id="btnText">Preparando...</span>
-          </a>
+          </button>
           <a href="/" class="btn btn-outline">Converter outro</a>
         </div>
       </div>
@@ -323,22 +316,19 @@
   <div class="toast" id="toast"></div>
 
   <script>
-    // Dados injetados direto do Blade do Laravel para o JavaScript
     const conversionId = "{{ $conversion->id }}";
     const format = "{{ $conversion->target_format }}";
     const initialStatus = "{{ $conversion->status }}";
+    const initialFileName = "{{ $conversion->file_path ?? '' }}"; // CORREÇÃO: nome do arquivo vindo do Blade
 
     const isAudio = format === 'mp3';
 
-    // Ícones SVG
     const filmIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>`;
     const musicIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
     const checkIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>`;
 
-    // Define elemento visual de ícone inicial
     document.getElementById('fileIcon').innerHTML = isAudio ? musicIcon : filmIcon;
 
-    // Elementos do DOM
     const fill = document.getElementById('progressFill');
     const text = document.getElementById('progressText');
     const badge = document.getElementById('statusBadge');
@@ -348,10 +338,9 @@
     const btnText = document.getElementById('btnText');
     const nameDisplay = document.getElementById('fileName');
 
-    let currentProgress = 0;
+    let currentFileName = initialFileName; // guarda o nome atualizado
 
     function updateUI(status, progress, fileName = null) {
-      // Faz a barra visual acompanhar o progresso real do banco
       fill.style.width = progress + '%';
       text.textContent = progress + '%';
 
@@ -361,12 +350,13 @@
         badge.innerHTML = checkIcon + ' Conversão concluída';
         title.textContent = 'Seu arquivo está pronto!';
         subtitle.textContent = 'Clique no botão abaixo para iniciar o download.';
-        
-        btn.classList.remove('disabled'); // Libera o link estilo botão
+
+        btn.classList.remove('disabled');
         btnText.textContent = 'Baixar ' + format.toUpperCase();
 
-        if(fileName) {
-            nameDisplay.textContent = fileName;
+        if (fileName) {
+          currentFileName = fileName; // CORREÇÃO: atualiza o nome quando vier do polling
+          nameDisplay.textContent = fileName;
         }
       } else if (status === 'failed') {
         badge.textContent = 'Erro';
@@ -377,66 +367,87 @@
       }
     }
 
-    // Função de verificação contínua (Polling) baseada no seu ConversionController@status
     function checkStatus() {
-        const token = localStorage.getItem('convertpro_token'); // Captura o token
-        
-        const interval = setInterval(async () => {
-            try {
-                const res = await fetch(`/api/v1/conversions/${id}`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Authorization': `Bearer ${token}` // Envia o passaporte do Sanctum
-                    }
-                });
-                
-                const data = await res.json();
+      const token = localStorage.getItem('convertpro_token');
 
-                updateUI(data.status, data.progress ?? 50, data.file_path);
-
-                if (data.status === 'completed' || data.status === 'failed') {
-                    clearInterval(interval);
-                }
-            } catch (err) {
-                console.error("Erro ao checar status:", err);
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/v1/conversions/${conversionId}/status`, {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
             }
-        }, 2000);
+          });
+
+          const data = await res.json();
+          updateUI(data.status, data.progress ?? 50, data.file_path);
+
+          if (data.status === 'completed' || data.status === 'failed') {
+            clearInterval(interval);
+          }
+        } catch (err) {
+          console.error("Erro ao checar status:", err);
+        }
+      }, 2000);
     }
 
-    // Inicializa a checagem ou libera direto se já veio pronto do backend
     if (initialStatus === 'completed') {
-        updateUI('completed', 100);
+      updateUI('completed', 100);
     } else if (initialStatus === 'failed') {
-        updateUI('failed', 0);
+      updateUI('failed', 0);
     } else {
-        // Se estiver "pending" ou "processing", inicia a checagem em tempo real
-        checkStatus();
+      checkStatus();
     }
 
-    // Efeito visual do Toast de Download
-    btn.addEventListener('click', () => {
-      if(!btn.classList.contains('disabled')) {
-          const toast = document.getElementById('toast');
-          toast.textContent = 'Baixando seu arquivo ' + format.toUpperCase() + '...';
-          toast.classList.add('show');
-          setTimeout(() => toast.classList.remove('show'), 4000);
+    // CORREÇÃO: download via fetch com Authorization header e nome correto do arquivo
+    document.addEventListener("DOMContentLoaded", () => {
+      const token = localStorage.getItem('convertpro_token');
+
+      if (token) {
+        btn.addEventListener('click', async (e) => {
+          e.preventDefault();
+          if (btn.classList.contains('disabled')) return;
+
+          const toastEl = document.getElementById('toast');
+          toastEl.textContent = 'Baixando seu arquivo ' + format.toUpperCase() + '...';
+          toastEl.classList.add('show');
+          setTimeout(() => toastEl.classList.remove('show'), 4000);
+
+          try {
+            const res = await fetch(`/api/v1/download/${conversionId}/file`, {
+              headers: { 'Authorization': `Bearer ${token}` }
+            });
+
+            if (!res.ok) {
+              alert('Erro ao baixar o arquivo. Tente novamente.');
+              return;
+            }
+
+            // CORREÇÃO: lê o nome direto do header Content-Disposition
+            const disposition = res.headers.get('Content-Disposition');
+            const filename = disposition
+                ? disposition.split('filename=')[1].replace(/"/g, '').trim()
+                : currentFileName || ('download.' + format);
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          } catch (err) {
+            console.error('Erro no download:', err);
+          }
+        });
+      } else {
+        alert("Sessão expirada. Por favor, faça login novamente.");
+        window.location.href = '/login';
       }
     });
-
-    document.addEventListener("DOMContentLoaded", () => {
-        const token = localStorage.getItem('convertpro_token');
-        const downloadBtn = document.getElementById('downloadBtn'); // ID corrigido para bater com o HTML
-
-        if (downloadBtn && token) {
-            // Modifica o link do botão para injetar o parâmetro ?token= conforme a Opção 1 que você escolheu
-            downloadBtn.href = `/api/v1/download/${conversionId}/file?token=${token}`;
-        } else {
-            alert("Sessão expirada. Por favor, faça login novamente.");
-            window.location.href = '/login';
-        }
-    });
-
-    </script>
+  </script>
 </body>
 </html>

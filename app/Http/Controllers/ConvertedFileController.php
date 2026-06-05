@@ -3,46 +3,60 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Conversion;
-use Illuminate\Support\Facades\Auth;
+use App\Models\ConvertedFile;
 
 class ConvertedFileController extends Controller
 {
-    
+    /**
+     * Lista todos os arquivos do usuário autenticado
+     */
     public function index(Request $request)
     {
-
         $user = $request->user();
-        $files = Conversion::where('user_id', $user->id)
-            ->latest()
-            ->get();
+
+        $files = ConvertedFile::whereHas('conversion', function ($query) use ($user) {
+            $query->where('user_id', $user->id);
+        })
+        ->latest()
+        ->get();
 
         return response()->json($files);
     }
 
-    public function show()
+    /**
+     * Mostra um arquivo específico
+     */
+    public function show(Request $request, $id)
     {
+    $file = ConvertedFile::with('conversion')->findOrFail($id);
+
+    if ($file->conversion->user_id !== $request->user()->id) {
         return response()->json([
-            'message' => 'Arquivo atualizado com sucesso',
-        ]);
+            'message' => 'Acesso negado.'
+        ], 403);
     }
 
+    return response()->json($file);
+    }
+
+    /**
+     * Deleta um arquivo convertido
+     */
     public function destroy(Request $request, $id)
     {
-     
-        $file = Conversion::findOrFail($id);
+        $file = ConvertedFile::with('conversion')->findOrFail($id);
 
-        if ($file->user_id !== $request->user()->id) {
+        // segurança: só dono pode deletar
+        if ($file->conversion->user_id !== $request->user()->id) {
             return response()->json([
-                'message' => 'Acesso negado. Você não tem permissão para excluir este arquivo.'
+                'message' => 'Acesso negado.'
             ], 403);
         }
 
         $file->delete();
 
         return response()->json([
-            'message' => "Arquivo " . $id . " deletado com sucesso!"
+            'message' => 'Arquivo deletado com sucesso!'
         ]);
     }
 }
-

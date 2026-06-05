@@ -1,0 +1,15 @@
+[90m= [39m[34;4mIlluminate\Database\Eloquent\Collection[39;24m {#7770
+    [34mall[39m: [
+      [34;4mLaravel\Sanctum\PersonalAccessToken[39;24m {#7777
+        [34mid[39m: [35m70[39m,
+        [34mtokenable_type[39m: [32m"[39m[32mApp[39m\\[32mModels[39m\\[32mUser[39m[32m"[39m,
+        [34mtokenable_id[39m: [35m18[39m,
+        [34mname[39m: [32m"[39m[32mauth_token[39m[32m"[39m,
+        #[33mtoken[39m: [32m"[39m[32m7b06b835192b2b1e9348c09346d9c9597dff3697ead3f539db74c7bf957fa7c9[39m[32m"[39m,
+        [34mabilities[39m: [32m"[39m[32m[[39m\"[32m*[39m\"[32m][39m[32m"[39m,
+        [34mlast_used_at[39m: [32m"[39m[32m2026-06-04 04:10:28[39m[32m"[39m,
+        [34mcreated_at[39m: [32m"[39m[32m2026-06-04 04:10:07[39m[32m"[39m,
+        [34mupdated_at[39m: [32m"[39m[32m2026-06-04 04:10:28[39m[32m"[39m,
+      },
+    ],
+  }

@@ -244,6 +244,7 @@
                 });
 
                 const data = await response.json();
+                console.log(data);
 
                 if (response.ok && data.access_token) {
                     // SALVA O TOKEN NO NAVEGADOR

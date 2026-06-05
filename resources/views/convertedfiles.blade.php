@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +10,14 @@
 
   <script>
     (function() {
-        const token = localStorage.getItem('convertpro_token');
-        if (!token) {
-            alert("Acesso restrito. Por favor, faça login para acessar seu histórico.");
-            window.location.href = '/login'; // Ajuste para a URL da sua tela de login
-        }
+      const token = localStorage.getItem('convertpro_token');
+      if (!token) {
+        alert("Acesso restrito. Por favor, faça login para acessar seu histórico.");
+        window.location.href = '/login';
+      }
     })();
   </script>
-  
+
   <style>
     :root {
       --brand: #e84d2c;
@@ -28,8 +29,12 @@
       --border: #e8e8ef;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
@@ -37,7 +42,10 @@
       padding: 40px 20px;
     }
 
-    .container { max-width: 1000px; margin: 0 auto; }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
 
     .header {
       display: flex;
@@ -46,7 +54,11 @@
       margin-bottom: 32px;
     }
 
-    h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
 
     .btn-new {
       background: var(--brand);
@@ -58,17 +70,24 @@
       font-size: 14px;
       transition: background 0.2s;
     }
-    .btn-new:hover { background: #c43d1f; }
+
+    .btn-new:hover {
+      background: #c43d1f;
+    }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 16px;
       overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
     }
 
-    table { width: 100%; border-collapse: collapse; text-align: left; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
 
     th {
       background: #f5f5f7;
@@ -80,7 +99,11 @@
       border-bottom: 1px solid var(--border);
     }
 
-    td { padding: 16px; border-bottom: 1px solid var(--border); font-size: 14px; }
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
 
     .source-url {
       max-width: 300px;
@@ -90,7 +113,6 @@
       color: var(--muted);
     }
 
-    /* Badges de Status */
     .badge {
       display: inline-block;
       padding: 4px 10px;
@@ -98,12 +120,26 @@
       font-size: 12px;
       font-weight: 600;
     }
-    .badge-completed { background: #e6f4ea; color: #137333; }
-    .badge-processing { background: #fef7e0; color: #b06000; }
-    .badge-failed { background: #fce8e6; color: #c5221f; }
 
-    /* Botões de Ação */
-    .actions { display: flex; gap: 8px; }
+    .badge-completed {
+      background: #e6f4ea;
+      color: #137333;
+    }
+
+    .badge-processing {
+      background: #fef7e0;
+      color: #b06000;
+    }
+
+    .badge-failed {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
 
     .btn-action {
       padding: 6px 12px;
@@ -115,17 +151,36 @@
       text-decoration: none;
       transition: opacity 0.2s;
     }
-    .btn-action:hover { opacity: 0.85; }
 
-    .btn-download { background: var(--brand-soft); color: var(--brand); }
-    .btn-delete { background: #fce8e6; color: #c5221f; }
-    
-    /* Estado desativado caso o arquivo ainda esteja processando */
-    .btn-action.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+    .btn-action:hover {
+      opacity: 0.85;
+    }
 
-    .empty-state { padding: 40px; text-align: center; color: var(--muted); }
+    .btn-download {
+      background: var(--brand-soft);
+      color: var(--brand);
+      cursor: pointer;
+    }
+
+    .btn-delete {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+
+    .btn-action.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    .empty-state {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+    }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -138,6 +193,7 @@
       <table>
         <thead>
           <tr>
+            <th>Nome do Arquivo</th>
             <th>Link Original</th>
             <th>Formato</th>
             <th>Status</th>
@@ -154,118 +210,184 @@
   </div>
 
   <script>
-  document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", () => {
       const token = localStorage.getItem('convertpro_token');
       const tableBody = document.getElementById('convertedFilesTable');
 
-      if (!token) return; // Segurança redundante caso passe da trava do head
+      if (!token) return;
 
-      /**
-       * BUSCA AS CONVERSÕES DA API
-       */
       async function loadHistory() {
-          try {
-              const res = await fetch('/api/v1/files', {
-                  method: 'GET',
-                  headers: {
-                      'Accept': 'application/json',
-                      'Authorization': `Bearer ${token}`
-                  }
-              });
-
-              if (!res.ok) throw new Error("Erro ao carregar dados.");
-
-              const conversions = await res.json();
-              renderTable(conversions);
-
-          } catch (err) {
-              tableBody.innerHTML = `<tr><td colspan="4" class="empty-state" style="color: #c5221f;">Não foi possível carregar seu histórico.</td></tr>`;
-              console.error(err);
-          }
-      }
-
-      /**
-       * REDENRIZA AS LINHAS DA TABELA DINAMICAMENTE
-       */
-      function renderTable(files) {
-          if (files.length === 0) {
-              tableBody.innerHTML = `<tr><td colspan="4" class="empty-state">Você ainda não possui conversões geradas.</td></tr>`;
-              return;
-          }
-
-          tableBody.innerHTML = '';
-
-          files.forEach(file => {
-              // Ajustando as classes CSS para os status vindos do banco
-              let badgeClass = 'badge-processing';
-              if (file.status === 'completed' || file.status === 'success') badgeClass = 'badge-completed';
-              if (file.status === 'failed' || file.status === 'error') badgeClass = 'badge-failed';
-
-              const isReady = file.status === 'completed' || file.status === 'success';
-              const downloadUrl = `/api/v1/download/${file.id}/file?token=${token}`;
-
-              const row = document.createElement('tr');
-              row.innerHTML = `
-                  <td>
-                      <div class="source-url" title="${file.source}">
-                          ${file.source}
-                      </div>
-                  </td>
-                  <td><strong>${(file.target_format ?? 'MP3').toUpperCase()}</strong></td>
-                  <td><span class="badge ${badgeClass}">${file.status.toUpperCase()}</span></td>
-                  <td>
-                      <div class="actions">
-                          <a href="${downloadUrl}" class="btn-action btn-download ${isReady ? '' : 'disabled'}">
-                              Baixar
-                          </a>
-                          <button class="btn-action btn-delete" data-id="${file.id}">
-                              Excluir
-                          </button>
-                      </div>
-                  </td>
-              `;
-              tableBody.appendChild(row);
+        try {
+          const res = await fetch('/api/v1/conversions', {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              'Authorization': `Bearer ${token}`
+            }
           });
 
-          setupDeleteButtons();
+          if (!res.ok) throw new Error("Erro ao carregar dados.");
+
+          const conversions = await res.json();
+          renderTable(conversions);
+
+        } catch (err) {
+          tableBody.innerHTML = `<tr><td colspan="4" class="empty-state" style="color: #c5221f;">Não foi possível carregar seu histórico.</td></tr>`;
+          console.error(err);
+        }
       }
 
-      /**
-       * CONFIGURA OS EVENTOS DOS BOTÕES DE EXCLUSÃO
-       */
+      function renderTable(conversions) {
+        if (conversions.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="4" class="empty-state">Você ainda não possui conversões geradas.</td></tr>`;
+          return;
+        }
+
+        tableBody.innerHTML = '';
+
+        conversions.forEach(conversion => {
+          let badgeClass = 'badge-processing';
+          if (conversion.status === 'completed') badgeClass = 'badge-completed';
+          if (conversion.status === 'failed') badgeClass = 'badge-failed';
+
+          const isReady = conversion.status === 'completed';
+
+          const row = document.createElement('tr');
+          row.innerHTML = `
+    <td>
+        <strong>${conversion.file_path ?? 'N/A'}</strong>
+    </td>
+
+    <td>
+        <div class="source-url" title="${conversion.source}">
+            ${conversion.source}
+        </div>
+    </td>
+
+    <td>
+        <strong>${(conversion.target_format ?? 'MP3').toUpperCase()}</strong>
+    </td>
+
+    <td>
+        <span class="badge ${badgeClass}">
+            ${conversion.status.toUpperCase()}
+        </span>
+    </td>
+
+    <td>
+        <div class="actions">
+            <button
+                class="btn-action btn-download ${isReady ? '' : 'disabled'}"
+                data-id="${conversion.id}"
+                data-filename="${conversion.file_path ?? 'download'}"
+            >
+                Baixar
+            </button>
+
+            <button
+                class="btn-action btn-delete"
+                data-id="${conversion.id}"
+            >
+                Excluir
+            </button>
+        </div>
+    </td>
+`;
+          tableBody.appendChild(row);
+        });
+
+        setupDownloadButtons();
+        setupDeleteButtons();
+      }
+
+      function setupDownloadButtons() {
+        document.querySelectorAll('.btn-download').forEach(button => {
+          button.addEventListener('click', async (e) => {
+
+            const id = e.target.getAttribute('data-id');
+
+            try {
+
+              const res = await fetch(`/api/v1/download/${id}/file`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${token}`
+                }
+              });
+
+              if (!res.ok) {
+                alert('Erro ao baixar arquivo');
+                return;
+              }
+
+              const blob = await res.blob();
+
+              const downloadUrl = window.URL.createObjectURL(blob);
+
+              const a = document.createElement('a');
+              a.href = downloadUrl;
+
+              const disposition = res.headers.get('Content-Disposition');
+
+              let filename = 'arquivo';
+
+              if (disposition && disposition.includes('filename=')) {
+                filename = disposition
+                  .split('filename=')[1]
+                  .replace(/"/g, '');
+              }
+
+              a.download = filename;
+
+              document.body.appendChild(a);
+              a.click();
+
+              a.remove();
+
+              window.URL.revokeObjectURL(downloadUrl);
+
+            } catch (error) {
+              console.error(error);
+              alert('Erro ao baixar arquivo');
+            }
+
+          });
+        });
+      }
+
       function setupDeleteButtons() {
-          document.querySelectorAll('.btn-delete').forEach(button => {
-              button.addEventListener('click', async (e) => {
-                  const id = e.target.getAttribute('data-id');
-                  
-                  if (!confirm("Tem certeza que deseja deletar este histórico?")) return;
+        document.querySelectorAll('.btn-delete').forEach(button => {
+          button.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
 
-                  try {
-                      const res = await fetch(`/api/v1/files/${id}`, {
-                          method: 'DELETE',
-                          headers: {
-                              'Accept': 'application/json',
-                              'Authorization': `Bearer ${token}`
-                          }
-                      });
+            if (!confirm("Tem certeza que deseja deletar este histórico?")) return;
 
-                      if (res.ok) {
-                          alert("Conversão excluída com sucesso!");
-                          loadHistory();
-                      } else {
-                          alert("Erro ao tentar excluir.");
-                      }
-                  } catch (err) {
-                      console.error("Erro ao deletar:", err);
-                  }
+            try {
+              const res = await fetch(`/api/v1/conversions/${id}`, {
+                method: 'DELETE',
+                headers: {
+                  'Accept': 'application/json',
+                  'Authorization': `Bearer ${token}`
+                }
               });
+
+              if (res.ok) {
+                alert("Conversão excluída com sucesso!");
+                loadHistory();
+              } else {
+                alert("Erro ao tentar excluir.");
+              }
+            } catch (err) {
+              console.error("Erro ao deletar:", err);
+            }
           });
+        });
       }
 
-      // Inicializa a listagem automaticamente
       loadHistory();
-  });
+    });
   </script>
 
 </body>
+
 </html>
