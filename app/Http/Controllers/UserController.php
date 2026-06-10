@@ -36,7 +36,9 @@ class UserController extends Controller
     }
 
     public function show(string $id)
+
     {
+        
         $usuario = User::select('id', 'name', 'email', 'is_admin')->find($id);
 
         if (!$usuario) {
@@ -52,6 +54,10 @@ class UserController extends Controller
             ->where('email', $email)
             ->get();
 
+        if (!$usuario) {
+            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        }
+
         return response()->json($usuario);
     }
 
@@ -64,9 +70,9 @@ class UserController extends Controller
         }
 
         $usuario->update([
-            "name" => $request->name,
-            "email" => $request->email,
-            "is_admin" => $request->is_admin 
+            'name' => $request->name ?? $usuario->name,
+            'email' => $request->email ?? $usuario->email,
+            "is_admin" => $request->is_admin ?? $usuario->is_admin
         ]);
 
         return response()->json([
@@ -87,5 +93,15 @@ class UserController extends Controller
         return response()->json([
             'message' => "Usuário deletado com sucesso! ID: {$id}"
         ]);
+        
+    }
+
+    public function admins(){
+        $admins = User::where('is_admin', 1)
+        ->select('id', 'name', 'email')
+        ->get();
+
+        return response()->json($admins);
     }
 }
+

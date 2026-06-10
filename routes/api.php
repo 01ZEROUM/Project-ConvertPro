@@ -45,6 +45,8 @@ Route::prefix('v1')->group(function () {
         Route::middleware('admin')->group(function () {
 
             Route::apiResource('users', UserController::class);
+            Route::get('users/email/{email}', [UserController::class, 'email']);
+            Route::get('admin', [UserController::class, 'admins']);
 
         });
 
