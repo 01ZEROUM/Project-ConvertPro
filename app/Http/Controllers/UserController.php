@@ -37,7 +37,7 @@ class UserController extends Controller
 
     public function show(string $id)
     {
-        $usuario = User::select('id', 'name', 'email')->find($id);
+        $usuario = User::select('id', 'name', 'email', 'is_admin')->find($id);
 
         if (!$usuario) {
             return response()->json(['message' => 'Usuário não encontrado'], 404);
@@ -65,7 +65,8 @@ class UserController extends Controller
 
         $usuario->update([
             "name" => $request->name,
-            "email" => $request->email
+            "email" => $request->email,
+            "is_admin" => $request->is_admin 
         ]);
 
         return response()->json([
